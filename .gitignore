@@ -21,3 +21,6 @@ collabtask-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# MacOS Finder directory attributes.
+.DS_Store
