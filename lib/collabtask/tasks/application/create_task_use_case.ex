@@ -6,17 +6,14 @@ defmodule Collabtask.Tasks.Application.CreateTaskUseCase do
   alias Collabtask.Tasks.Domain.Events.TaskCreated
   alias Collabtask.Tasks.Ports.TaskRepository
   alias Collabtask.Shared.Ports.IdGenerator
-  alias Collabtask.Shared.Types.Result
 
   @type dependencies :: %{
           id_generator: IdGenerator.t(),
           task_repository: TaskRepository.t()
         }
 
-  @type handle_result :: Result.t(TaskCreated.t(), term())
-
   @impl Collabtask.Shared.Ports.CommandHandler
-  @spec handle(CreateTaskCommand.t(), dependencies()) :: handle_result()
+  @spec handle(CreateTaskCommand.t(), dependencies()) :: {:ok, TaskCreated.t()} | {:error, term()}
   def handle(%CreateTaskCommand{params: params}, %{
         id_generator: id_generator,
         task_repository: task_repository
