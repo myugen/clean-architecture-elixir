@@ -14,17 +14,49 @@ defmodule Collabtask.Tasks.Domain.Task do
           status: TaskStatus.t()
         }
 
-  @spec create(CreateTaskParams.t(), IdGenerator.t()) :: TaskCreated.t()
+  @spec create(CreateTaskParams.t(), IdGenerator.t()) ::
+          {:ok, {t(), TaskCreated.t()}} | {:error, term()}
   def create(%CreateTaskParams{title: title, description: description}, id_generator) do
-    id = TaskId.generate(id_generator)
+    with :ok <- validate_title(title),
+         :ok <- validate_description(description) do
+      id = TaskId.generate(id_generator)
+      status = TaskStatus.todo()
 
-    %__MODULE__{
-      id: id,
-      title: title,
-      description: description,
-      status: TaskStatus.from_string("todo")
-    }
+      task = %__MODULE__{
+        id: id,
+        title: title,
+        description: description,
+        status: status
+      }
 
-    TaskCreated.new(id, title, description, :todo)
+      event = TaskCreated.new(id, title, description, status)
+
+      {:ok, {task, event}}
+    end
+  end
+
+  defp validate_title(title) when is_binary(title) and byte_size(title) > 0 do
+    if String.length(String.trim(title)) > 0 do
+      :ok
+    else
+      {:error, {:validation_error, :title, "cannot be empty or only whitespace"}}
+    end
+  end
+
+  defp validate_title(_title) do
+    {:error, {:validation_error, :title, "is required and must be a string"}}
+  end
+
+  defp validate_description(description)
+       when is_binary(description) and byte_size(description) > 0 do
+    if String.length(String.trim(description)) > 0 do
+      :ok
+    else
+      {:error, {:validation_error, :description, "cannot be empty or only whitespace"}}
+    end
+  end
+
+  defp validate_description(_description) do
+    {:error, {:validation_error, :description, "is required and must be a string"}}
   end
 end
