@@ -1,9 +1,11 @@
 defmodule Collabtask.Tasks.Domain.Events.TaskCreated do
+  alias Collabtask.Tasks.Domain.ValueObjects.TaskId
+
   @enforce_keys [:task_id, :title, :description, :status, :ocurred_at]
   defstruct [:task_id, :title, :description, :status, :ocurred_at]
 
   @type t :: %__MODULE__{
-          task_id: String.t(),
+          task_id: TaskId.t(),
           title: String.t(),
           description: String.t(),
           status: String.t(),

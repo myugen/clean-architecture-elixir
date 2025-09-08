@@ -25,6 +25,6 @@ defmodule Collabtask.Tasks.Domain.Task do
       status: TaskStatus.from_string("todo")
     }
 
-    TaskCreated.new(TaskId.to_string(id), title, description, :todo)
+    TaskCreated.new(id, title, description, :todo)
   end
 end
